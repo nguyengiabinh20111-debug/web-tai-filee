@@ -37,7 +37,7 @@
         .subtitle {
             font-size: 13px;
             color: #94a3b8;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -56,10 +56,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .select-box:focus {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-        }
         .task-btn { 
             display: flex;
             align-items: center;
@@ -74,31 +70,56 @@
             font-weight: bold; 
             cursor: pointer; 
             text-decoration: none; 
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
         }
-        .task-btn:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        .task-btn.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+        }
+        .progress-text {
+            font-size: 13px;
+            color: #94a3b8;
+            margin: 15px 0 10px 0;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #ef4444;
+            transition: width 0.4s ease, background 0.4s ease;
         }
         .download-btn {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; 
+            background: #475569;
+            color: #94a3b8; 
             padding: 14px; 
             border: none; 
             border-radius: 12px; 
             width: 100%; 
             font-size: 16px; 
             font-weight: bold; 
-            cursor: pointer; 
+            cursor: not-allowed; 
             text-decoration: none; 
             display: inline-block; 
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
-            margin-top: 5px;
+            pointer-events: none;
         }
-        .download-btn:hover {
+        .download-btn.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35);
+        }
+        .download-btn.active:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
         }
@@ -108,7 +129,7 @@
 
 <div class="card">
     <h2 id="titleText">Delta Roblox</h2>
-    <div class="subtitle" id="subText">Kênh Cập Nhật Chính Thức</div>
+    <div class="subtitle">Kênh Cập Nhật Chính Thức</div>
 
     <div class="select-group">
         <select id="versionSelect" class="select-box" onchange="updateInfo(this)">
@@ -118,32 +139,84 @@
         </select>
     </div>
 
-    <!-- Nút YouTube -->
-    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn">
+    <!-- Nút 1: YouTube -->
+    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="completeTask('yt')">
         🔴 Nhấn vào để đăng ký kênh YouTube
     </a>
 
-    <!-- Nút Discord -->
-    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn">
+    <!-- Nút 2: Discord -->
+    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="completeTask('dc')">
         💬 Nhấn vào để tham gia Discord
     </a>
 
-    <!-- Nút tải file -->
-    <a id="downloadBtn" href="#" class="download-btn" onclick="if(this.getAttribute('href')==='#'){alert('Vui lòng chọn phiên bản Roblox ở trên trước nhé!'); return false;}">
+    <!-- Tiến trình -->
+    <div class="progress-text" id="progressText">Tiến trình mở khoá: 0/2</div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Nút tải file (Bị khóa ban đầu) -->
+    <a id="downloadBtn" href="#" class="download-btn" onclick="checkDownload(event)">
         📥 Nhận File Tải Xuống
     </a>
 </div>
 
 <script>
+    let ytDone = false;
+    let dcDone = false;
+    let selectedFileUrl = "#";
+
     function updateInfo(select) {
         var selectedOption = select.options[select.selectedIndex];
         var versionName = selectedOption.getAttribute("data-name");
-        
-        // Đổi tiêu đề theo bản chọn
         document.getElementById("titleText").innerText = versionName;
+        selectedFileUrl = select.value;
+    }
+
+    function completeTask(type) {
+        if(type === 'yt' && !ytDone) {
+            ytDone = true;
+            document.getElementById("ytBtn").classList.add("completed");
+            document.getElementById("ytBtn").innerHTML = "✅ Đã đăng ký kênh YouTube";
+        }
+        if(type === 'dc' && !dcDone) {
+            dcDone = true;
+            document.getElementById("dcBtn").classList.add("completed");
+            document.getElementById("dcBtn").innerHTML = "✅ Đã tham gia Discord";
+        }
+
+        updateProgress();
+    }
+
+    function updateProgress() {
+        let count = (ytDone ? 1 : 0) + (dcDone ? 1 : 0);
+        document.getElementById("progressText").innerText = "Tiến trình mở khoá: " + count + "/2";
         
-        // Gán link tải vào nút bên dưới
-        document.getElementById("downloadBtn").href = select.value;
+        let percent = (count / 2) * 100;
+        let bar = document.getElementById("progressBar");
+        bar.style.width = percent + "%";
+
+        if(count === 2) {
+            bar.style.background = "#22c55e";
+            let btn = document.getElementById("downloadBtn");
+            btn.classList.add("active");
+            btn.innerText = "🚀 Tải Xuống Ngay";
+        }
+    }
+
+    function checkDownload(e) {
+        if(!ytDone || !dcDone) {
+            e.preventDefault();
+            alert("Vui lòng hoàn thành đăng ký YouTube và tham gia Discord trước để mở khóa nút tải!");
+            return;
+        }
+        if(selectedFileUrl === "#") {
+            e.preventDefault();
+            alert("Vui lòng chọn phiên bản Roblox ở trên trước nhé!");
+            return;
+        }
+        // Cho phép chuyển hướng tải file
+        window.location.href = selectedFileUrl;
     }
 </script>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác Thực Tải Xuống - Delta Roblox</title>
+    <title>BIN HUB - Xác Thực Tải Xuống</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -29,15 +29,15 @@
             text-align: center; 
         }
         .logo-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: 45px;
+            margin-bottom: 5px;
         }
         h2 { 
-            font-size: 24px; 
-            margin-bottom: 6px; 
+            font-size: 26px; 
+            margin-bottom: 4px; 
             color: #f8fafc;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: 0.5px;
         }
         .subtitle {
             font-size: 13px;
@@ -49,7 +49,6 @@
         }
         .select-group {
             margin-bottom: 25px;
-            position: relative;
         }
         .select-box { 
             width: 100%; 
@@ -61,7 +60,7 @@
             color: #fff;
             outline: none;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             font-weight: 500;
         }
         .select-box:focus {
@@ -90,6 +89,11 @@
         .task-btn:hover { 
             transform: translateY(-2px);
             box-shadow: 0 15px 25px -5px rgba(239, 68, 68, 0.6);
+        }
+        .task-btn.loading {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            pointer-events: none;
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
         }
         .task-btn.completed {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -166,9 +170,9 @@
 <body>
 
 <div class="card">
-    <div class="logo-icon">⚡</div>
-    <h2 id="titleText">Delta Roblox</h2>
-    <div class="subtitle">Hệ Thống Xác Thực An Toàn</div>
+    <div class="logo-icon">🚀</div>
+    <h2>BIN HUB</h2>
+    <div class="subtitle">Hệ Thống Xác Thực Tải Xuống</div>
 
     <div class="select-group">
         <select id="versionSelect" class="select-box" onchange="updateInfo(this)">
@@ -179,7 +183,7 @@
     </div>
 
     <!-- Nút số 1: YouTube -->
-    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="doTask('yt')">
+    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="startTask('yt', event)">
         <div class="task-left">
             <span style="font-size: 20px;">🔴</span>
             <span>Đăng ký Kênh YouTube</span>
@@ -188,7 +192,7 @@
     </a>
 
     <!-- Nút số 2: Discord -->
-    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="doTask('dc')">
+    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="startTask('dc', event)">
         <div class="task-left">
             <span style="font-size: 20px;">💬</span>
             <span>Tham gia nhóm Discord</span>
@@ -220,16 +224,41 @@
 
     function updateInfo(select) {
         var selectedOption = select.options[select.selectedIndex];
-        var versionName = selectedOption.getAttribute("data-name");
-        document.getElementById("titleText").innerText = versionName;
         selectedFileUrl = select.value;
     }
 
-    function doTask(type) {
+    function startTask(type, event) {
+        if(type === 'yt' && ytDone) return;
+        if(type === 'dc' && dcDone) return;
+
+        let btnId = (type === 'yt') ? "ytBtn" : "dcBtn";
+        let statusId = (type === 'yt') ? "ytStatus" : "dcStatus";
+        let btn = document.getElementById(btnId);
+        let status = document.getElementById(statusId);
+
+        if(btn.classList.contains('loading') || btn.classList.contains('completed')) return;
+
+        btn.classList.add('loading');
+        let timeLeft = 10; // Đếm ngược 10 giây
+        status.innerText = `Chờ (${timeLeft}s)`;
+
+        let countdown = setInterval(() => {
+            timeLeft--;
+            if(timeLeft > 0) {
+                status.innerText = `Chờ (${timeLeft}s)`;
+            } else {
+                clearInterval(countdown);
+                completeTask(type);
+            }
+        }, 1000);
+    }
+
+    function completeTask(type) {
         if(type === 'yt' && !ytDone) {
             ytDone = true;
             let btn = document.getElementById("ytBtn");
             let status = document.getElementById("ytStatus");
+            btn.classList.remove("loading");
             btn.classList.add("completed");
             status.innerText = "Đã xong ✓";
         }
@@ -237,6 +266,7 @@
             dcDone = true;
             let btn = document.getElementById("dcBtn");
             let status = document.getElementById("dcStatus");
+            btn.classList.remove("loading");
             btn.classList.add("completed");
             status.innerText = "Đã xong ✓";
         }
@@ -262,7 +292,7 @@
     function checkDownload(e) {
         if(!ytDone || !dcDone) {
             e.preventDefault();
-            alert("⚠️ Bạn cần hoàn thành cả 2 nhiệm vụ (YouTube & Discord) để mở khóa link tải!");
+            alert("⚠️ Bạn cần hoàn thành chờ đủ thời gian xác minh cả 2 nhiệm vụ!");
             return;
         }
         if(selectedFileUrl === "#") {

@@ -7,8 +7,8 @@
     <style>
         * { box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #0f172a, #1e293b); 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%); 
             margin: 0; 
             padding: 20px; 
             display: flex; 
@@ -18,84 +18,96 @@
             color: #fff;
         }
         .card { 
-            background: rgba(30, 41, 59, 0.9); 
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 30px; 
-            border-radius: 24px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 35px 25px; 
+            border-radius: 28px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); 
             width: 100%; 
-            max-width: 420px; 
+            max-width: 440px; 
             text-align: center; 
+        }
+        .logo-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
         }
         h2 { 
             font-size: 24px; 
-            margin-bottom: 8px; 
+            margin-bottom: 6px; 
             color: #f8fafc;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
         .subtitle {
             font-size: 13px;
             color: #94a3b8;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
         .select-group {
-            margin-bottom: 22px;
+            margin-bottom: 25px;
+            position: relative;
         }
         .select-box { 
             width: 100%; 
-            padding: 14px 16px; 
-            border-radius: 14px; 
-            border: 1px solid #475569; 
+            padding: 16px 18px; 
+            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
             font-size: 15px; 
-            background: #0f172a; 
+            background: rgba(30, 41, 59, 0.7); 
             color: #fff;
             outline: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
         }
         .select-box:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            background: rgba(30, 41, 59, 0.9);
         }
         .task-btn { 
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            justify-content: space-between;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
             color: white; 
-            padding: 14px; 
+            padding: 15px 20px; 
             border: none; 
-            border-radius: 14px; 
+            border-radius: 16px; 
             width: 100%; 
             font-size: 15px; 
-            font-weight: 600; 
+            font-weight: 700; 
             cursor: pointer; 
             text-decoration: none; 
-            margin-bottom: 14px;
+            margin-bottom: 15px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
         }
         .task-btn:hover { 
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
-        }
-        .task-btn.loading {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            pointer-events: none;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+            box-shadow: 0 15px 25px -5px rgba(239, 68, 68, 0.6);
         }
         .task-btn.completed {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
             pointer-events: none;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .progress-container {
-            margin: 20px 0;
+            margin: 25px 0 20px 0;
             text-align: left;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .progress-info {
             display: flex;
@@ -103,81 +115,92 @@
             font-size: 13px;
             color: #94a3b8;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
         }
         .progress-bar-container {
             width: 100%;
             height: 10px;
-            background: #334155;
+            background: #1e293b;
             border-radius: 5px;
             overflow: hidden;
         }
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: #ef4444;
-            transition: width 0.4s ease, background 0.4s ease;
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+            transition: width 0.5s ease, background 0.5s ease;
+            border-radius: 5px;
         }
         .download-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: #475569;
-            color: #94a3b8; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 14px; 
+            background: rgba(255, 255, 255, 0.05);
+            color: #64748b; 
+            padding: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px; 
             width: 100%; 
             font-size: 16px; 
-            font-weight: bold; 
+            font-weight: 800; 
             cursor: not-allowed; 
             text-decoration: none; 
             transition: all 0.3s ease;
             pointer-events: none;
         }
         .download-btn.active {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
             cursor: pointer;
             pointer-events: auto;
-            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+            border: none;
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
         }
         .download-btn.active:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(34, 197, 94, 0.6);
+            box-shadow: 0 20px 30px -5px rgba(99, 102, 241, 0.7);
         }
     </style>
 </head>
 <body>
 
 <div class="card">
+    <div class="logo-icon">⚡</div>
     <h2 id="titleText">Delta Roblox</h2>
-    <div class="subtitle">🔒 Hệ Thống Xác Thực Mở Khóa</div>
+    <div class="subtitle">Hệ Thống Xác Thực An Toàn</div>
 
     <div class="select-group">
         <select id="versionSelect" class="select-box" onchange="updateInfo(this)">
-            <option value="#" selected disabled>-- Chọn phiên bản Roblox --</option>
+            <option value="#" selected disabled>📂 Chọn phiên bản Roblox cần tải</option>
             <option value="https://drive.google.com/uc?export=download&id=16cFv0A1SlXkztIvPEyOHuGGEVGPvI_9m" data-name="Detail Roblox Quốc Tế">⚡ Detail Roblox Quốc Tế</option>
             <option value="https://drive.google.com/uc?export=download&id=1yhQR2953pHu_5U08WKR1Z4H8ZMHx9FoQ" data-name="Detail Roblox VNG">🔥 Detail Roblox VNG</option>
         </select>
     </div>
 
     <!-- Nút số 1: YouTube -->
-    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="startTask('yt', event)">
-        🔴 Nhấn vào để đăng ký kênh YouTube
+    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="doTask('yt')">
+        <div class="task-left">
+            <span style="font-size: 20px;">🔴</span>
+            <span>Đăng ký Kênh YouTube</span>
+        </div>
+        <span id="ytStatus" style="font-size: 13px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px;">Chưa làm</span>
     </a>
 
     <!-- Nút số 2: Discord -->
-    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="startTask('dc', event)">
-        💬 Nhấn vào để tham gia Discord
+    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="doTask('dc')">
+        <div class="task-left">
+            <span style="font-size: 20px;">💬</span>
+            <span>Tham gia nhóm Discord</span>
+        </div>
+        <span id="dcStatus" style="font-size: 13px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 8px;">Chưa làm</span>
     </a>
 
     <!-- Thanh tiến trình -->
     <div class="progress-container">
         <div class="progress-info">
             <span>Tiến trình mở khóa</span>
-            <span id="progressText">0/2 nhiệm vụ</span>
+            <span id="progressText">0 / 2 nhiệm vụ</span>
         </div>
         <div class="progress-bar-container">
             <div class="progress-bar" id="progressBar"></div>
@@ -202,62 +225,34 @@
         selectedFileUrl = select.value;
     }
 
-    function startTask(type, event) {
-        if(type === 'yt' && ytDone) return;
-        if(type === 'dc' && dcDone) return;
-
-        let btnId = (type === 'yt') ? "ytBtn" : "dcBtn";
-        let btn = document.getElementById(btnId);
-        
-        // Chống bấm liên tục và chuyển sang trạng thái chờ 5 giây
-        if(btn.classList.contains('loading') || btn.classList.contains('completed')) return;
-
-        btn.classList.add('loading');
-        let timeLeft = 5;
-        
-        let taskName = (type === 'yt') ? "Đăng ký YouTube" : "Tham gia Discord";
-        btn.innerHTML = `⏳ Đang xác minh (${timeLeft}s)...`;
-
-        let countdown = setInterval(() => {
-            timeLeft--;
-            if(timeLeft > 0) {
-                btn.innerHTML = `⏳ Đang xác minh (${timeLeft}s)...`;
-            } else {
-                clearInterval(countdown);
-                completeTask(type);
-            }
-        }, 1000);
-    }
-
-    function completeTask(type) {
+    function doTask(type) {
         if(type === 'yt' && !ytDone) {
             ytDone = true;
-            let yt = document.getElementById("ytBtn");
-            yt.classList.remove("loading");
-            yt.classList.add("completed");
-            yt.innerHTML = "✅ Đã đăng ký kênh YouTube thành công";
+            let btn = document.getElementById("ytBtn");
+            let status = document.getElementById("ytStatus");
+            btn.classList.add("completed");
+            status.innerText = "Đã xong ✓";
         }
         if(type === 'dc' && !dcDone) {
             dcDone = true;
-            let dc = document.getElementById("dcBtn");
-            dc.classList.remove("loading");
-            dc.classList.add("completed");
-            dc.innerHTML = "✅ Đã tham gia Discord thành công";
+            let btn = document.getElementById("dcBtn");
+            let status = document.getElementById("dcStatus");
+            btn.classList.add("completed");
+            status.innerText = "Đã xong ✓";
         }
-
         updateProgress();
     }
 
     function updateProgress() {
         let count = (ytDone ? 1 : 0) + (dcDone ? 1 : 0);
-        document.getElementById("progressText").innerText = count + "/2 nhiệm vụ";
+        document.getElementById("progressText").innerText = count + " / 2 nhiệm vụ";
         
         let percent = (count / 2) * 100;
         let bar = document.getElementById("progressBar");
         bar.style.width = percent + "%";
 
         if(count === 2) {
-            bar.style.background = "#22c55e";
+            bar.style.background = "linear-gradient(90deg, #10b981, #059669)";
             let btn = document.getElementById("downloadBtn");
             btn.classList.add("active");
             btn.innerHTML = "🚀 Nhận Link Tải File Ngay";
@@ -267,7 +262,7 @@
     function checkDownload(e) {
         if(!ytDone || !dcDone) {
             e.preventDefault();
-            alert("⚠️ Bạn cần hoàn thành chờ đủ thời gian xác minh cả 2 nhiệm vụ!");
+            alert("⚠️ Bạn cần hoàn thành cả 2 nhiệm vụ (YouTube & Discord) để mở khóa link tải!");
             return;
         }
         if(selectedFileUrl === "#") {

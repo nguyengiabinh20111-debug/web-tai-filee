@@ -83,8 +83,14 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
         }
+        .task-btn.loading {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+        }
         .task-btn.completed {
             background: linear-gradient(135deg, #10b981, #059669);
+            pointer-events: none;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
         }
         .progress-container {
@@ -129,7 +135,6 @@
             text-decoration: none; 
             transition: all 0.3s ease;
             pointer-events: none;
-            box-shadow: none;
         }
         .download-btn.active {
             background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -159,12 +164,12 @@
     </div>
 
     <!-- Nút số 1: YouTube -->
-    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="completeTask('yt')">
+    <a href="https://youtube.com/@congdongscript?si=wdPztpaB3mqr2izj" target="_blank" class="task-btn" id="ytBtn" onclick="startTask('yt', event)">
         🔴 Nhấn vào để đăng ký kênh YouTube
     </a>
 
     <!-- Nút số 2: Discord -->
-    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="completeTask('dc')">
+    <a href="https://discord.gg/dFGDzvChZ" target="_blank" class="task-btn" id="dcBtn" onclick="startTask('dc', event)">
         💬 Nhấn vào để tham gia Discord
     </a>
 
@@ -197,16 +202,45 @@
         selectedFileUrl = select.value;
     }
 
+    function startTask(type, event) {
+        if(type === 'yt' && ytDone) return;
+        if(type === 'dc' && dcDone) return;
+
+        let btnId = (type === 'yt') ? "ytBtn" : "dcBtn";
+        let btn = document.getElementById(btnId);
+        
+        // Chống bấm liên tục và chuyển sang trạng thái chờ 5 giây
+        if(btn.classList.contains('loading') || btn.classList.contains('completed')) return;
+
+        btn.classList.add('loading');
+        let timeLeft = 5;
+        
+        let taskName = (type === 'yt') ? "Đăng ký YouTube" : "Tham gia Discord";
+        btn.innerHTML = `⏳ Đang xác minh (${timeLeft}s)...`;
+
+        let countdown = setInterval(() => {
+            timeLeft--;
+            if(timeLeft > 0) {
+                btn.innerHTML = `⏳ Đang xác minh (${timeLeft}s)...`;
+            } else {
+                clearInterval(countdown);
+                completeTask(type);
+            }
+        }, 1000);
+    }
+
     function completeTask(type) {
         if(type === 'yt' && !ytDone) {
             ytDone = true;
             let yt = document.getElementById("ytBtn");
+            yt.classList.remove("loading");
             yt.classList.add("completed");
             yt.innerHTML = "✅ Đã đăng ký kênh YouTube thành công";
         }
         if(type === 'dc' && !dcDone) {
             dcDone = true;
             let dc = document.getElementById("dcBtn");
+            dc.classList.remove("loading");
             dc.classList.add("completed");
             dc.innerHTML = "✅ Đã tham gia Discord thành công";
         }
@@ -233,7 +267,7 @@
     function checkDownload(e) {
         if(!ytDone || !dcDone) {
             e.preventDefault();
-            alert("⚠️ Bạn chưa hoàn thành đủ 2 nhiệm vụ (Đăng ký YouTube và Tham gia Discord)!");
+            alert("⚠️ Bạn cần hoàn thành chờ đủ thời gian xác minh cả 2 nhiệm vụ!");
             return;
         }
         if(selectedFileUrl === "#") {
